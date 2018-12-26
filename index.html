@@ -348,7 +348,7 @@ function isLetterString(str) {
                 var res = marker.title.substring(0, inputLength);
                 console.log(res);
 
-                if ( res == input.value ) {
+                if ( res.toLowerCase() == input.value.toLowerCase() ) {
                     console.log('res == input.value');
                 } else {
                     console.log('NOT res == input.value');
