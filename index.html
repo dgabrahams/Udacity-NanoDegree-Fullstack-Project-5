@@ -142,57 +142,6 @@
 
     <script>
 
-
-var data = [{
-tag: "Museum",
-name: "London Dungeon",
-location: {
- lat: 51.5025036,
- lng: -0.1188513
-},
-info : '<div>thing</div>'
-}, {
-tag: "Government",
-name: "Palace of Westminster",
-location: {
- lat: 51.4994747,
- lng: -0.1249188
-},
-info : '<div>thing</div>'
-}, {
-tag: "Museum",
-name: "Imperial War Museun",
-location: {
- lat: 51.4958298,
- lng: -0.108777
-},
-info : '<div>thing</div>'
-}, {
-tag: "Government",
-name: "Buckingham Palace",
-location: {
- lat: 51.5013641,
- lng: -0.1419852
-},
-info : '<div>thing</div>'
-}, {
-tag: "Entertainment",
-name: "Shakespear's Globe Theatre",
-location: {
- lat: 51.5080892,
- lng: -0.0972754
-},
-info : '<div>thing</div>'
-}, {
-tag: "Landmarks",
-name: "Monument",
-location: {
- lat: 51.5101626,
- lng: -0.0860095
-},
-info : '<div>thing</div>'
-}];
-
 var markers = [];
 
 
@@ -221,7 +170,7 @@ function initMap() {
     // var vm = new viewModel(data);
     var marker;
 
-    $.each(data, function(i, item) {
+    $.each(viewModel.locationData(), function(i, item) {
         marker = new google.maps.Marker({
             position: item.location,
             title: item.name,
@@ -231,14 +180,8 @@ function initMap() {
         marker.setMap(map);
         addInfoWindow(marker, item.info);
         map.setCenter(marker.getPosition());
-
-        // console.log(item.name);
-        // console.log(marker);
-
-
         marker.addListener('click', function() {
-           // $('#campground_info').html(markerInfo)
-
+        // $('#campground_info').html(markerInfo)
         });
 
         markers.push(marker);
@@ -247,8 +190,6 @@ function initMap() {
 
  }
 // google.maps.event.addDomListener(window, 'load', initMap);
-
-
 
 
 function isLetterString(str) {
@@ -265,9 +206,6 @@ function isLetterString(str) {
   }
   return value;
 }
-
-
-
 
 
 $(document).ready(function() {
@@ -318,15 +256,11 @@ document.getElementById("input_filter").addEventListener("keyup", function() {
 
     </script>
 
-
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgvutAIrugkQmimvF8iCZdhhy7s4atumo&callback=initMap"></script>
     <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgvutAIrugkQmimvF8iCZdhhy7s4atumo"></script> -->
     <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script> -->
     <script src="js/lib/knockout-3.4.2.js"></script>
     <script src="../view_model/app.js"></script>
-
-
-
 
 </body>
 </html>
