@@ -119,24 +119,6 @@
 
 </head>
 <body>
-
-
-
-
-<!-- Google Maps API is not working as I expect it. I have enabled all the APIs, and it loads, but I am now getting this error: "This page can't load Google Maps correctly. Do you own this website?" Console error reads: "You have exceeded your request quota for this API." - looking at my quota, "Map loads per day" is only one, and I cannot seem to increase it without enabling billing. I am sure I am missing a trick here - can anyone help?
- -->
-
-
-<!--     <ul id="cat-list"></ul>
-    <div id="cat">
-
-        <h2 id="cat-name"></h2>
-        <div id="cat-count"></div>
-        <img id="cat-img" src="" alt="cute cat">
-
-    </div> -->
-
-
     <div id="outer-container" class="outer-container">
 
         <div id="header" class="header"></div>
@@ -158,120 +140,60 @@
 
 
 
-
-
-
     <script>
 
 
-
-//<li data-bind="text: $data.name, visible: $data.showItem, click: myFunction"></li>
-
-
-      // var map;
-      // function initMap() {
-      //   map = new google.maps.Map(document.getElementById('map'), {
-      //     // center: {lat: -34.397, lng: 150.644},
-      //     center: {lat: 51.508530, lng: -0.076132},
-      //     zoom: 16
-      //   });
-      // }
-      // 51.5002854,-0.1376614,14.66z
-
-
-
-
-
-//  function viewModel(locations) {
-//    var self = this;
-//    // this.points = ko.observableArray('');
-//    // this.selectedPoint = ko.observable('');
-
-//    // this.setSelected = function(item) {
-//    //   self.selectedPoint(item);
-//    //   var locations = ko.toJS(self.filteredNames)
-//    //   $.each(locations, function(i, item) {
-//    //     var marker = new google.maps.Marker({
-//    //       position: item.location,
-//    //       title: item.name
-//    //     });
-//    //     marker.setMap(map);
-//    //     map.setCenter(marker.getPosition());
-//    //   });
-
-//    // }
-
-//      $.each(locations, function(i, item) {
-//        var marker = new google.maps.Marker({
-//          position: item.location,
-//          title: item.name
-//        });
-//        marker.setMap(map);
-//        map.setCenter(marker.getPosition());
-//      });
-
-// }
-
-
-
-
- // var map;
-
- var data = [{
-   tag: "Museum",
-   name: "London Dungeon",
-   location: {
-     lat: 51.5025036,
-     lng: -0.1188513
-   },
-   info : '<div>thing</div>'
- }, {
-   tag: "Government",
-   name: "Palace of Westminster",
-   location: {
-     lat: 51.4994747,
-     lng: -0.1249188
-   },
-   info : '<div>thing</div>'
- }, {
-   tag: "Museum",
-   name: "Imperial War Museun",
-   location: {
-     lat: 51.4958298,
-     lng: -0.108777
-   },
-   info : '<div>thing</div>'
- }, {
-   tag: "Government",
-   name: "Buckingham Palace",
-   location: {
-     lat: 51.5013641,
-     lng: -0.1419852
-   },
-   info : '<div>thing</div>'
- }, {
-   tag: "Entertainment",
-   name: "Shakespear's Globe Theatre",
-   location: {
-     lat: 51.5080892,
-     lng: -0.0972754
-   },
-   info : '<div>thing</div>'
- }, {
-   tag: "Landmarks",
-   name: "Monument",
-   location: {
-     lat: 51.5101626,
-     lng: -0.0860095
-   },
-   info : '<div>thing</div>'
- }];
+var data = [{
+tag: "Museum",
+name: "London Dungeon",
+location: {
+ lat: 51.5025036,
+ lng: -0.1188513
+},
+info : '<div>thing</div>'
+}, {
+tag: "Government",
+name: "Palace of Westminster",
+location: {
+ lat: 51.4994747,
+ lng: -0.1249188
+},
+info : '<div>thing</div>'
+}, {
+tag: "Museum",
+name: "Imperial War Museun",
+location: {
+ lat: 51.4958298,
+ lng: -0.108777
+},
+info : '<div>thing</div>'
+}, {
+tag: "Government",
+name: "Buckingham Palace",
+location: {
+ lat: 51.5013641,
+ lng: -0.1419852
+},
+info : '<div>thing</div>'
+}, {
+tag: "Entertainment",
+name: "Shakespear's Globe Theatre",
+location: {
+ lat: 51.5080892,
+ lng: -0.0972754
+},
+info : '<div>thing</div>'
+}, {
+tag: "Landmarks",
+name: "Monument",
+location: {
+ lat: 51.5101626,
+ lng: -0.0860095
+},
+info : '<div>thing</div>'
+}];
 
 var markers = [];
-
- // var vm = new viewModel();
- // var vm = new viewModel(data);
-
 
 
 function addInfoWindow(marker, message) {
@@ -281,29 +203,6 @@ function addInfoWindow(marker, message) {
     google.maps.event.addListener(marker, 'click', function () {
         infoWindow.open(map, marker);
     });
-}
-// addInfoWindow(marker, hotels[i][3]);
-
-
-
-function hideMarkers() {
-
-  for (i = 0; i < markers.length; i++) {
-    var marker = markers[i];
-
-    // start the filter check assuming the marker will be displayed
-    // if any of the required features are missing, set 'keep' to false
-    // to discard this marker
-    // keep=true
-    // for (opt=0; opt<set_filters.length; opt++) {
-    //   if (!marker.properties[set_filters[opt]]) {
-    //     keep = false;
-    //   }
-    // }
-    // marker.setVisible(keep)
-    marker.setVisible(false);
-  }
-
 }
 
 
@@ -371,61 +270,51 @@ function isLetterString(str) {
 
 
 
- $(document).ready(function() {
+$(document).ready(function() {
 
-    document.getElementById("input_filter").addEventListener("keyup", function() {
+document.getElementById("input_filter").addEventListener("keyup", function() {
 
-        var input = document.getElementById("input_filter");
+    var input = document.getElementById("input_filter");
+    var value = isLetterString(input.value);
 
-        // console.log(input.value);
-        // isLetterString(input.value);
-        // console.log( 'thing' );
-        // console.log( isLetterString(input.value) );
-        var value = isLetterString(input.value);
-        console.log(value);
+    console.log(value);
 
+    //filter results against the input string 
+    if ( value == true ) {
+        var inputLength = input.value.length;
 
+        for (i = 0; i < markers.length; i++) {
+            var marker = markers[i];
 
-        // console.log( 'after' );
+            //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
+            //compare the two, if its a match add to the final output. if not, remove.
+            var res = marker.title.substring(0, inputLength);
+            console.log(res);
 
-        //aboce it checks that the string is value
-        //if ok it will filter the results against the string 
-        if ( value == true ) {
-            var inputLength = input.value.length;
-            // console.log('inputLength: '+inputLength);
-
-            for (i = 0; i < markers.length; i++) {
-                var marker = markers[i];
-
-                //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
-                //compare the two, if its a match add to the final output. if not, remove.
-                var res = marker.title.substring(0, inputLength);
-                console.log(res);
-
-                if ( res.toLowerCase() == input.value.toLowerCase() ) {
-                    console.log('res == input.value');
-                } else {
-                    console.log('NOT res == input.value');
-                    marker.setVisible(false);
-                    // locationData()[i].showItem(false);
-                    // viewModel().locationData()[i].showItem(false);
-                    viewModel.locationData()[i].showItem(false);
-                }
-            }
-        } else {
-            // Set all items to display
-            console.log('else');
-            for (i = 0; i < markers.length; i++) {
-                markers[i].setVisible(true);
-                // locationData()[i].showItem(true);
-                // viewModel().locationData()[i].showItem(true);
-                viewModel.locationData()[i].showItem(true);
+            if ( res.toLowerCase() == input.value.toLowerCase() ) {
+                console.log('res == input.value');
+            } else {
+                console.log('NOT res == input.value');
+                marker.setVisible(false);
+                // locationData()[i].showItem(false);
+                // viewModel().locationData()[i].showItem(false);
+                viewModel.locationData()[i].showItem(false);
             }
         }
-    }, false);
+    } else {
+        // Set all items to display
+        console.log('else');
+        for (i = 0; i < markers.length; i++) {
+            markers[i].setVisible(true);
+            // locationData()[i].showItem(true);
+            // viewModel().locationData()[i].showItem(true);
+            viewModel.locationData()[i].showItem(true);
+        }
+    }
+}, false);
 
 
- });
+});
 
     </script>
 
