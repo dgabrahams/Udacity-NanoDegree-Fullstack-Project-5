@@ -7,56 +7,111 @@
     <style>
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
-      #map {
-/*        height: 100%;
+        #map {
+        /*        height: 100%;
 
         height: 500px;
         width: 500px;*/
-/*        height: 100%;
+        /*        height: 100%;
         width: 100%;*/
-      }
-      /* Optional: Makes the sample page fill the window. */
-      html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-      }
+        }
+        /* Optional: Makes the sample page fill the window. */
+            html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
 
-      .outer-container {
-        max-width: 800px;
-        margin: auto;
+        .outer-container {
+            max-width: 800px;
+            margin: auto;
+        }
 
-      }
+        .main {
+            width: 100%;
+            max-width: 800px;
+            background-color: #000000;
+            /*padding: 5%;*/
+            padding: 0 2% 2% 0;
+        }
 
-      .main {
-        width: 100%;
-        max-width: 800px;
-        background-color: #000000;
-        /*padding: 5%;*/
-        padding: 0 2% 2% 0;
-      }
+        .header {
+            display: block;
+            width: 100%;
+            background-color: #000000;
+            height:50px;
+        }
+        .sidebar-menu {
+            display: inline-block;
+            vertical-align: top;
+            width: 30%;
+            /*background-color: #000000;*/
+            color: #ffffff;
+            padding: 2%;
+        }
+        .map {
+            display: inline-block;
+            vertical-align: top;
+            width: 65%; 
+            height: 100%;
+            padding-bottom: 70%;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            line-height: 1.5;
+        }
+        .sidebar-menu input {
+            margin: auto;
+            /*display: block;*/
+            /*width: 80%;*/
+            padding: 2%;
+            font-size: 16px;
+        }
 
-      .header {
-        display: block;
-        width: 100%;
-        background-color: #000000;
-        height:50px;
-      }
-      .sidebar-menu {
-        display: inline-block;
-        vertical-align: top;
-        width: 30%;
-        /*background-color: #000000;*/
-        color: #ffffff;
-        padding: 2%
-      }
-      .map {
-        display: inline-block;
-        vertical-align: top;
-        width: 65%; 
-        height: 100%;
-        padding-bottom: 70%;
-      }
+
+        @media screen and (max-width: 700px) {
+
+/*            .sidebar-menu {
+                display: block;
+            }
+            .map {
+                display: block;
+                width: 100%;
+            }*/
+
+        }
+
+
+        @media only screen and (max-width: 768px) {
+          /* For mobile phones: */
+/*          [class*="col-"] {
+            width: 100%;
+          }*/
+
+            .map {
+                display: block;
+                width: 100%;
+            }
+            .sidebar-menu {
+                display: block;
+                max-height: 400px;
+                width: 100%;
+                text-align: center;
+            }
+            .sidebar-menu input {
+                margin: auto;
+                /*display: block;*/
+                width: 80%;
+                padding: 2%;
+                font-size: 16px;
+            }
+
+        }
+
+
 
     </style>
 
@@ -90,8 +145,8 @@
                 <input type="text" name="filter_input" id="input_filter">
 
 
-                <ul data-bind="foreach: locationData" id="location-items">
-                    <li data-bind="text: $data.name, visible: $data.showItem"></li>
+                <ul data-bind="foreach: viewModel.locationData" id="location-items">
+                    <li data-bind="text: $data.name, visible: $data.showItem, click: viewModel.myFunction"></li>
                 </ul>
 
 
@@ -107,6 +162,12 @@
 
 
     <script>
+
+
+
+//<li data-bind="text: $data.name, visible: $data.showItem, click: myFunction"></li>
+
+
       // var map;
       // function initMap() {
       //   map = new google.maps.Map(document.getElementById('map'), {
@@ -278,6 +339,7 @@ function initMap() {
 
         marker.addListener('click', function() {
            // $('#campground_info').html(markerInfo)
+
         });
 
         markers.push(marker);
@@ -329,16 +391,8 @@ function isLetterString(str) {
         //aboce it checks that the string is value
         //if ok it will filter the results against the string 
         if ( value == true ) {
-            //filter using the value
-
-
-///////////////////////////////////
-//use obserables to update the dom
-/////////////////////////////////
-
             var inputLength = input.value.length;
-            console.log('inputLength: '+inputLength);
-
+            // console.log('inputLength: '+inputLength);
 
             for (i = 0; i < markers.length; i++) {
                 var marker = markers[i];
@@ -353,12 +407,9 @@ function isLetterString(str) {
                 } else {
                     console.log('NOT res == input.value');
                     marker.setVisible(false);
-///////////////////////////////////
-//set list values to hide those that are not a marker that is shown
-/////////////////////////////////
-//works!!!!
-// locationData()[2].showItem(false);
-                    locationData()[i].showItem(false);
+                    // locationData()[i].showItem(false);
+                    // viewModel().locationData()[i].showItem(false);
+                    viewModel.locationData()[i].showItem(false);
                 }
             }
         } else {
@@ -366,7 +417,9 @@ function isLetterString(str) {
             console.log('else');
             for (i = 0; i < markers.length; i++) {
                 markers[i].setVisible(true);
-                locationData()[i].showItem(true);
+                // locationData()[i].showItem(true);
+                // viewModel().locationData()[i].showItem(true);
+                viewModel.locationData()[i].showItem(true);
             }
         }
     }, false);
