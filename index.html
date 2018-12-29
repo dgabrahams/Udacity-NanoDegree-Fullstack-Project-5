@@ -128,7 +128,7 @@
 
 
                 <ul data-bind="foreach: viewModel.locationData" id="location-items">
-                    <li data-bind="text: $data.name, visible: $data.showItem, click: viewModel.myFunction"></li>
+                    <li data-bind="text: $data.name, visible: $data.showItem, click: viewModel.highlightMarker"></li>
                 </ul>
 
 
@@ -145,13 +145,16 @@
 var markers = [];
 
 
-function addInfoWindow(marker, message) {
+function addInfoWindow(marker, message, index) {
     var infoWindow = new google.maps.InfoWindow({
         content: message
     });
     google.maps.event.addListener(marker, 'click', function () {
         infoWindow.open(map, marker);
     });
+
+    //add the infoWindow to view model
+    viewModel.locationData()[index]['infoWindow'] = infoWindow;
 }
 
 
@@ -178,11 +181,13 @@ function initMap() {
         });
         // marker.visible = false;
         marker.setMap(map);
-        addInfoWindow(marker, item.info);
+        addInfoWindow(marker, item.info, i);
         map.setCenter(marker.getPosition());
-        marker.addListener('click', function() {
-        // $('#campground_info').html(markerInfo)
-        });
+        // marker.addListener('click', function() {
+        // // $('#campground_info').html(markerInfo)
+        // // viewModel.highlightMarker();
+        // });
+        console.log(marker);
 
         markers.push(marker);
 
@@ -210,49 +215,54 @@ function isLetterString(str) {
 
 $(document).ready(function() {
 
-document.getElementById("input_filter").addEventListener("keyup", function() {
+    document.getElementById("input_filter").addEventListener("keyup", function() {
 
-    var input = document.getElementById("input_filter");
-    var value = isLetterString(input.value);
+        var input = document.getElementById("input_filter");
+        var value = isLetterString(input.value);
 
-    console.log(value);
+        console.log(value);
 
-    //filter results against the input string 
-    if ( value == true ) {
-        var inputLength = input.value.length;
+        //filter results against the input string 
+        if ( value == true ) {
+            var inputLength = input.value.length;
 
-        for (i = 0; i < markers.length; i++) {
-            var marker = markers[i];
+            for (i = 0; i < markers.length; i++) {
+                var marker = markers[i];
 
-            //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
-            //compare the two, if its a match add to the final output. if not, remove.
-            var res = marker.title.substring(0, inputLength);
-            console.log(res);
+                //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
+                //compare the two, if its a match add to the final output. if not, remove.
+                var res = marker.title.substring(0, inputLength);
+                console.log(res);
 
-            if ( res.toLowerCase() == input.value.toLowerCase() ) {
-                console.log('res == input.value');
-            } else {
-                console.log('NOT res == input.value');
-                marker.setVisible(false);
-                // locationData()[i].showItem(false);
-                // viewModel().locationData()[i].showItem(false);
-                viewModel.locationData()[i].showItem(false);
+                if ( res.toLowerCase() == input.value.toLowerCase() ) {
+                    // console.log('res == input.value');
+                } else {
+                    // console.log('NOT res == input.value');
+                    marker.setVisible(false);
+                    // locationData()[i].showItem(false);
+                    // viewModel().locationData()[i].showItem(false);
+                    viewModel.locationData()[i].showItem(false);
+                }
+            }
+        } else {
+            // Set all items to display
+            console.log('else');
+            for (i = 0; i < markers.length; i++) {
+                markers[i].setVisible(true);
+                // locationData()[i].showItem(true);
+                // viewModel().locationData()[i].showItem(true);
+                viewModel.locationData()[i].showItem(true);
             }
         }
-    } else {
-        // Set all items to display
-        console.log('else');
-        for (i = 0; i < markers.length; i++) {
-            markers[i].setVisible(true);
-            // locationData()[i].showItem(true);
-            // viewModel().locationData()[i].showItem(true);
-            viewModel.locationData()[i].showItem(true);
-        }
-    }
-}, false);
+
+
+    }, false);
 
 
 });
+
+
+// function 
 
     </script>
 
