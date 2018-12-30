@@ -61,7 +61,14 @@
             padding: 0;
         }
         li {
-            line-height: 1.5;
+            line-height: 3;
+            font-family: sans-serif;
+            font-weight: 100;
+            font-size: 14px;
+        }
+        .highlighted {
+            background-color: #ffffff;
+            background-color:rgba(255,255,255,0.2);
         }
         .sidebar-menu input {
             margin: auto;
@@ -128,9 +135,11 @@
 
 
                 <ul data-bind="foreach: viewModel.locationData" id="location-items">
-                    <li data-bind="text: $data.name, visible: $data.showItem, click: viewModel.highlightMarker"></li>
+                    <li data-bind="text: $data.name, visible: $data.showItem, click: viewModel.highlightMarker, css: { highlighted: $data.highlighted() == true }"></li>
                 </ul>
-
+                <!-- works: css: { 'highlighted': 'someValue' } -->
+                <!-- css: { profitWarning: viewModel.currentProfit() < 0 } -->
+                <!-- css: viewModel.highlightMenuItem -->
 
             </div>
             <div id="map" class="map"></div>
@@ -142,9 +151,10 @@
 
     <script>
 
+//Stores active markers for interaction with them in Google Maps.
 var markers = [];
 
-
+//Adds information window to google maps when a marker is clicked on.
 function addInfoWindow(marker, message, index) {
     var infoWindow = new google.maps.InfoWindow({
         content: message
@@ -153,7 +163,7 @@ function addInfoWindow(marker, message, index) {
         infoWindow.open(map, marker);
     });
 
-    //add the infoWindow to view model
+    //add the active infoWindow to view model to interact with programatically.
     viewModel.locationData()[index]['infoWindow'] = infoWindow;
 }
 
@@ -215,6 +225,7 @@ function isLetterString(str) {
 
 $(document).ready(function() {
 
+    //filter funtionality
     document.getElementById("input_filter").addEventListener("keyup", function() {
 
         var input = document.getElementById("input_filter");
