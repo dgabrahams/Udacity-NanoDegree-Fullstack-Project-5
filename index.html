@@ -65,10 +65,15 @@
             font-family: sans-serif;
             font-weight: 100;
             font-size: 14px;
+            color: #A0A0A0;
+        }
+        li:hover {
+            cursor: pointer;
         }
         .highlighted {
             background-color: #ffffff;
             background-color:rgba(255,255,255,0.2);
+            color: #ffffff;
         }
         .sidebar-menu input {
             margin: auto;
@@ -132,6 +137,8 @@
         <div id="main" class="main">
             <div id="sidebar-menu" class="sidebar-menu">
                 <input type="text" name="filter_input" id="input_filter">
+                <button type="button" onclick="runFilter()">Filter</button>
+                <button type="button" onclick="resetFilter()">Reset</button>
 
 
                 <ul data-bind="foreach: viewModel.locationData" id="location-items">
@@ -228,43 +235,45 @@ $(document).ready(function() {
     //filter funtionality
     document.getElementById("input_filter").addEventListener("keyup", function() {
 
-        var input = document.getElementById("input_filter");
-        var value = isLetterString(input.value);
+        runFilter();
 
-        console.log(value);
+        // var input = document.getElementById("input_filter");
+        // var value = isLetterString(input.value);
 
-        //filter results against the input string 
-        if ( value == true ) {
-            var inputLength = input.value.length;
+        // console.log(value);
 
-            for (i = 0; i < markers.length; i++) {
-                var marker = markers[i];
+        // //filter results against the input string 
+        // if ( value == true ) {
+        //     var inputLength = input.value.length;
 
-                //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
-                //compare the two, if its a match add to the final output. if not, remove.
-                var res = marker.title.substring(0, inputLength);
-                console.log(res);
+        //     for (i = 0; i < markers.length; i++) {
+        //         var marker = markers[i];
 
-                if ( res.toLowerCase() == input.value.toLowerCase() ) {
-                    // console.log('res == input.value');
-                } else {
-                    // console.log('NOT res == input.value');
-                    marker.setVisible(false);
-                    // locationData()[i].showItem(false);
-                    // viewModel().locationData()[i].showItem(false);
-                    viewModel.locationData()[i].showItem(false);
-                }
-            }
-        } else {
-            // Set all items to display
-            console.log('else');
-            for (i = 0; i < markers.length; i++) {
-                markers[i].setVisible(true);
-                // locationData()[i].showItem(true);
-                // viewModel().locationData()[i].showItem(true);
-                viewModel.locationData()[i].showItem(true);
-            }
-        }
+        //         //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
+        //         //compare the two, if its a match add to the final output. if not, remove.
+        //         var res = marker.title.substring(0, inputLength);
+        //         console.log(res);
+
+        //         if ( res.toLowerCase() == input.value.toLowerCase() ) {
+        //             // console.log('res == input.value');
+        //         } else {
+        //             // console.log('NOT res == input.value');
+        //             marker.setVisible(false);
+        //             // locationData()[i].showItem(false);
+        //             // viewModel().locationData()[i].showItem(false);
+        //             viewModel.locationData()[i].showItem(false);
+        //         }
+        //     }
+        // } else {
+        //     // Set all items to display
+        //     console.log('else');
+        //     for (i = 0; i < markers.length; i++) {
+        //         markers[i].setVisible(true);
+        //         // locationData()[i].showItem(true);
+        //         // viewModel().locationData()[i].showItem(true);
+        //         viewModel.locationData()[i].showItem(true);
+        //     }
+        // }
 
 
     }, false);
@@ -273,7 +282,60 @@ $(document).ready(function() {
 });
 
 
-// function 
+function runFilter() {
+
+    var input = document.getElementById("input_filter");
+    var value = isLetterString(input.value);
+
+    console.log(value);
+
+    //filter results against the input string 
+    if ( value == true ) {
+        var inputLength = input.value.length;
+
+        for (i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+
+            //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
+            //compare the two, if its a match add to the final output. if not, remove.
+            var res = marker.title.substring(0, inputLength);
+            console.log(res);
+
+            if ( res.toLowerCase() == input.value.toLowerCase() ) {
+                // console.log('res == input.value');
+            } else {
+                // console.log('NOT res == input.value');
+                marker.setVisible(false);
+                // locationData()[i].showItem(false);
+                // viewModel().locationData()[i].showItem(false);
+                viewModel.locationData()[i].showItem(false);
+            }
+        }
+    } else {
+        // Set all items to display
+        console.log('else');
+        for (i = 0; i < markers.length; i++) {
+            markers[i].setVisible(true);
+            // locationData()[i].showItem(true);
+            // viewModel().locationData()[i].showItem(true);
+            viewModel.locationData()[i].showItem(true);
+        }
+    }
+
+}
+
+function resetFilter() {
+        var input = document.getElementById("input_filter");
+        input.value = '';
+
+        for (i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+            marker.setVisible(true);
+            viewModel.locationData()[i].showItem(true);
+            viewModel.locationData()[i].infoWindow.close();
+            viewModel.toggleHighlightClass(i, false);
+        }
+}
 
     </script>
 
