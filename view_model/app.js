@@ -1,38 +1,66 @@
 var viewModel = {
     highlightMarker: function(data, event) {
-
-			// Clicking a location on the list displays unique information about
-			// the location, and animates its associated map marker (e.g.
-			// bouncing, color change.)
-
-    	// console.log('highlightMarker');
-	    // console.log(data);
-			// console.log(markers);
-
 		  for (i = 0; i < markers.length; i++) {
 		    var marker = markers[i];
 
         if ( data.name.toLowerCase() == marker.title.toLowerCase() ) {
-            // console.log('data.name == marker.title');
             marker.setVisible(true);
             google.maps.event.trigger(marker, 'click');
             viewModel.toggleHighlightClass(i, true);
         } else {
-            // console.log('NOT data.name == marker.title');
             marker.setVisible(false);
             viewModel.locationData()[i].infoWindow.close();
             viewModel.toggleHighlightClass(i, false);
         }
 		  }
     },
-    currentProfit: ko.observable(150000),
     toggleHighlightClass: function(item, value) {
-    	  // console.log('toggleHighlightClass');
         if (value == true) {
         	viewModel.locationData()[item].highlighted(true);
         } else {
         	viewModel.locationData()[item].highlighted(false);
         }
+    },
+    wikiURL: 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=',
+    generateLinks: function() {
+		  for (i = 0; i < viewModel.locationData().length; i++) {
+		  	viewModel.locationData()[i].infoTitle = viewModel.wikiURL + viewModel.locationData()[i].infoTitle;
+		  }
+    },
+    getInfoWindowContent: function() {
+
+	    	// xhr = new XMLHttpRequest();
+
+        $.ajax({
+          url: 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=Monument_to_the_Great_Fire_of_London',
+          type: 'GET',
+          dataType: 'json',
+					// xhrFields: {
+					// 	withCredentials: true
+					// },
+          // crossDomain: true,
+          // headers: {"Access-Control-Allow-Origin": "*"},
+          headers: {
+          	// "Origin": "http://localhost:8000/",
+          	"Content-Type": "application/json; charset=UTF-8",
+          },
+          success: function() { alert('hello!'); },
+          error: function() { alert('boo!'); },
+          // beforeSend: setHeader
+        });
+
+	      function setHeader(xhr) {
+	        xhr.setRequestHeader('Access-Control-Allow-Origin', 'x-requested-with');
+	        // xhr.setRequestHeader('passkey', 'Bar');
+	      }
+// xhr.setRequestHeader("Content-Type", "application/json; charset=UTF-8");
+// xhr.setRequestHeader("Origin", "http://www.yourpage.com");
+			// $.getJSON("https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=Monument_to_the_Great_Fire_of_London", function(data) { 
+			//     // Now use this data to update your view models, 
+			//     // and Knockout will update your UI automatically 
+			//     console.log(data);
+			// })
+
     },
 		locationData: ko.observableArray([
 			{
@@ -43,9 +71,9 @@ var viewModel = {
 			   lng: -0.1188513
 			 },
 			 showItem: ko.observable(true),
-			 // highlighted: 'thing',
 			 highlighted: ko.observable(false),
-			 info : '<div>thing London Dungeon</div>'
+			 info : '<div>thing London Dungeon</div>',
+			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}, {
 			 tag: "Government",
 			 name: "Palace of Westminster",
@@ -55,7 +83,8 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 info : '<div>thing Palace of Westminster</div>'
+			 info : '<div>thing Palace of Westminster</div>',
+			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}, {
 			 tag: "Museum",
 			 name: "Imperial War Museum",
@@ -65,7 +94,8 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 info : '<div>thing Imperial War Museum</div>'
+			 info : '<div>thing Imperial War Museum</div>',
+			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}, {
 			 tag: "Government",
 			 name: "Buckingham Palace",
@@ -75,7 +105,8 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 info : '<div>thing Buckingham Palace</div>'
+			 info : '<div>thing Buckingham Palace</div>',
+			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}, {
 			 tag: "Entertainment",
 			 name: "Shakespear's Globe Theatre",
@@ -85,7 +116,8 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 info : '<div>thing Shakespears Globe Theatre</div>'
+			 info : '<div>thing Shakespears Globe Theatre</div>',
+			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}, {
 			 tag: "Landmarks",
 			 name: "Monument",
@@ -95,22 +127,13 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 info : '<div>thing Monument</div>'
+			 info : '<div>thing Monument</div>',
+			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}
 		])
 };
 
-
-// viewModel.highlightMenuItem = ko.pureComputed(function(item) {
-// 		console.log(item);
-//     return this.currentProfit() < 0 ? "profitWarning" : "profitPositive";
-// }, viewModel);
-
-// Causes the "profitPositive" class to be removed and "profitWarning" class to be added
-// viewModel.currentProfit(-50);
-// viewModel.currentProfit(50);
-
-
+viewModel.generateLinks();
 
 ko.applyBindings(viewModel);
 // ko.applyBindings(new viewModel.locationData(), document.getElementById("menu-items"));
