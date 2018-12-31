@@ -45,13 +45,13 @@ def showLandingPage():
 
 @app.route('/js/<path:path>')
 def getJS(path):
-    print path
+    # print path
     return send_from_directory('js', path)
 
 
 @app.route('/view_model/<path:path>')
 def getViewModel(path):
-    print path
+    # print path
     return send_from_directory('view_model', path)
 
 

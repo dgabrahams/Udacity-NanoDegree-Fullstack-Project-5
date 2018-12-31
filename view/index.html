@@ -207,7 +207,10 @@ function initMap() {
         // marker.visible = false;
         marker.setMap(map);
         // addInfoWindow(marker, item.info, i);
-        addInfoWindow(marker, item.infoTitle, i);
+        // addInfoWindow(marker, item.infoTitle, i);//original, works
+        viewModel.getInfoWindowContent(marker, item.infoTitle, i);
+
+
 
         map.setCenter(marker.getPosition());
         // marker.addListener('click', function() {
