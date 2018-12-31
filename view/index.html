@@ -25,6 +25,8 @@
         .outer-container {
             max-width: 800px;
             margin: auto;
+            font-size: 0;
+            line-height: 0;
         }
 
         .main {
@@ -49,10 +51,11 @@
         .sidebar-menu {
             display: inline-block;
             vertical-align: top;
-            width: 30%;
+            width: 35%;
             /*background-color: #000000;*/
             color: #ffffff;
-            padding: 2%;
+            /*padding: 2%;*/
+            padding: 0;
             float: left;
         }
         .map {
@@ -73,6 +76,9 @@
             font-weight: 100;
             font-size: 14px;
             color: #A0A0A0;
+            /*padding: 0 5px 0 5px;*/
+            /*padding: 2%;*/
+            padding: 0 5% 0 5%;
         }
         li:hover {
             cursor: pointer;
@@ -85,9 +91,36 @@
         .sidebar-menu input {
             margin: auto;
             /*display: block;*/
-            /*width: 80%;*/
+            width: 71.333%;
             padding: 2%;
             font-size: 16px;
+        }
+        .sidebar-menu button {
+            display: inline-block;
+            width: 24.333%;
+            text-align: center;
+            padding: 2%;
+            font-size: 16px;
+            border: none;
+            cursor: pointer;
+        }
+        .sidebar-menu button:hover {
+            background-color: rgb(220,220,220);
+        }
+        .sidebar-menu button:active {
+            background-color: rgb(214, 234, 248);
+        }
+        .input-container input {
+            display: inline-block;
+            border: none;
+        }
+        .input-container button {
+            /*display: inline-block;*/
+            width: 24.333%;
+            /*text-align: center;*/
+/*            padding: 2%;
+            font-size: 16px;
+            border: none;*/
         }
 
 
@@ -143,8 +176,10 @@
         <div id="header" class="header"></div>
         <div id="main" class="main">
             <div id="sidebar-menu" class="sidebar-menu">
-                <input type="text" name="filter_input" id="input_filter">
-                <button type="button" onclick="runFilter()">Filter</button>
+                <div class="input-container">
+                    <input type="text" name="filter_input" id="input_filter">
+                    <button type="button" onclick="runFilter()">Filter</button>
+                </div>
                 <button type="button" onclick="resetFilter()">Reset</button>
 
 
@@ -217,7 +252,7 @@ function initMap() {
         // // $('#campground_info').html(markerInfo)
         // // viewModel.highlightMarker();
         // });
-        console.log(marker);
+        // console.log(marker);
 
         markers.push(marker);
 
