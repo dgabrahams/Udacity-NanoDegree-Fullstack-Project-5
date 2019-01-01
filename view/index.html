@@ -209,17 +209,35 @@ function addInfoWindow(marker, message, index) {
     var infoWindow = new google.maps.InfoWindow({
         content: message
     });
+    viewModel.locationData()[index]['infoWindow'] = infoWindow;
+    
     google.maps.event.addListener(marker, 'click', function () {
-        infoWindow.open(map, marker);
+        filterInfoWindows(marker.title);
+        // infoWindow.open(map, marker);//original
+        // viewModel.highlightMarker();
+        // console.log('markerEvent');
+        // console.log(marker);//has title
+        // filterInfoWindows(marker.title);
+
+        // var data = { 
+        //     'name': marker.title 
+        // }
+
+
+// {'name': marker.title}
+
+        // viewModel.highlightMarker(data,event);
+        // viewModel.highlightMarker(data);
     });
 
     //add the active infoWindow to view model to interact with programatically.
-    viewModel.locationData()[index]['infoWindow'] = infoWindow;
+    // viewModel.locationData()[index]['infoWindow'] = infoWindow;
 }
 
 
  // function initialize() {
 function initMap() {
+    console.log('initMap');
     // var myLatlng = new google.maps.LatLng(-34.397, 150.644);
     var myLatlng = new google.maps.LatLng(51.5076898,-0.1218453);
 
@@ -335,7 +353,7 @@ function runFilter() {
     var input = document.getElementById("input_filter");
     var value = isLetterString(input.value);
 
-    console.log(value);
+    // console.log(value);
 
     //filter results against the input string 
     if ( value == true ) {
@@ -347,7 +365,7 @@ function runFilter() {
             //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
             //compare the two, if its a match add to the final output. if not, remove.
             var res = marker.title.substring(0, inputLength);
-            console.log(res);
+            // console.log(res);
 
             if ( res.toLowerCase() == input.value.toLowerCase() ) {
                 // console.log('res == input.value');
@@ -361,7 +379,7 @@ function runFilter() {
         }
     } else {
         // Set all items to display
-        console.log('else');
+        // console.log('else');
         for (i = 0; i < markers.length; i++) {
             markers[i].setVisible(true);
             // locationData()[i].showItem(true);
@@ -383,6 +401,27 @@ function resetFilter() {
             viewModel.locationData()[i].infoWindow.close();
             viewModel.toggleHighlightClass(i, false);
         }
+}
+
+function filterInfoWindows(markerTitle) {
+    // console.log('markerTitle: '+markerTitle);
+    for (i = 0; i < markers.length; i++) {
+        var marker = markers[i];
+        // console.log('filterInfoWindows i: '+i);
+        if ( marker.title.toLowerCase() != markerTitle.toLowerCase() ) {
+            viewModel.locationData()[i].infoWindow.close();
+        } else {
+            viewModel.locationData()[i].infoWindow.open(map, marker);
+            // infoWindow.open(map, marker);
+        }
+
+        // if ( marker.title.toLowerCase() == markerTitle.toLowerCase() ) {
+        //     // viewModel.locationData()[i].infoWindow.close();
+        // } else {
+        //     viewModel.locationData()[i].infoWindow.close();
+        // }
+
+    }
 }
 
     </script>

@@ -1,27 +1,38 @@
 var viewModel = {
     highlightMarker: function(data, event) {
+    	// console.log('highlightMarker');
+    	// console.log(data);
 		  for (i = 0; i < markers.length; i++) {
+		  	// console.log('highlightMarker i: '+i);
 		    var marker = markers[i];
 
         if ( data.name.toLowerCase() == marker.title.toLowerCase() ) {
             marker.setVisible(true);
-            google.maps.event.trigger(marker, 'click');
             viewModel.toggleHighlightClass(i, true);
+            viewModel.locationData()[i].infoWindow.open(map, marker);
+            // google.maps.event.trigger(marker, 'click');
+            // viewModel.locationData()[i].infoWindow.open(map, marker);
         } else {
             marker.setVisible(false);
-            viewModel.locationData()[i].infoWindow.close();
+            // viewModel.locationData()[i].infoWindow.close();
             viewModel.toggleHighlightClass(i, false);
+            viewModel.locationData()[i].infoWindow.close();
+            // viewModel.locationData()[i].infoWindow.close();
         }
 		  }
+		  // filterInfoWindows(marker.title);
     },
     toggleHighlightClass: function(item, value) {
+    	// console.log('toggleHighlightClass: '+item);
+    	// console.log(value);
         if (value == true) {
-        	viewModel.locationData()[item].highlighted(true);
+        	viewModel.locationData()[parseInt(item)].highlighted(true);
         } else {
-        	viewModel.locationData()[item].highlighted(false);
+        	viewModel.locationData()[parseInt(item)].highlighted(false);
         }
     },
     getInfoWindowContent: function(marker, title, index) {
+    	  // console.log('*** getInfoWindowContent ***');
         $.ajax({
           url: '/json/'+String(title),
           type: 'GET',
@@ -36,10 +47,6 @@ var viewModel = {
           	var result = data.query.pages;
           	// console.log(result);
           	for (var property in result) {
-          		// console.log(property);
-          		// console.log(result[property].extract);
-          		// console.log(property.pageid);
-          		// console.log(result[property].extract.substring(0, 250)+'...');
           		addInfoWindow(this.marker, result[property].extract.substring(0, 150)+'...', this.indexValue);
           	}
           	// addInfoWindow(this.marker, data, this.indexValue);          	
