@@ -3,20 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Locations App</title>
-
     <style>
-      /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-        #map {
-        /*        height: 100%;
 
-        height: 500px;
-        width: 500px;*/
-        /*        height: 100%;
-        width: 100%;*/
-        }
-        /* Optional: Makes the sample page fill the window. */
-            html, body {
+        html, body {
             height: 100%;
             margin: 0;
             padding: 0;
@@ -33,8 +22,6 @@
             width: 100%;
             max-width: 800px;
             background-color: #000000;
-            /*padding: 5%;*/
-            /*padding: 0 2% 2% 0;*/
             padding: 0;
         }
         .clearfix {
@@ -52,9 +39,7 @@
             display: inline-block;
             vertical-align: top;
             width: 35%;
-            /*background-color: #000000;*/
             color: #ffffff;
-            /*padding: 2%;*/
             padding: 0;
             float: left;
         }
@@ -76,8 +61,6 @@
             font-weight: 100;
             font-size: 14px;
             color: #A0A0A0;
-            /*padding: 0 5px 0 5px;*/
-            /*padding: 2%;*/
             padding: 0 5% 0 5%;
         }
         li:hover {
@@ -90,7 +73,6 @@
         }
         .sidebar-menu input {
             margin: auto;
-            /*display: block;*/
             width: 71.333%;
             padding: 2%;
             font-size: 16px;
@@ -115,33 +97,14 @@
             border: none;
         }
         .input-container button {
-            /*display: inline-block;*/
             width: 24.333%;
-            /*text-align: center;*/
-/*            padding: 2%;
-            font-size: 16px;
-            border: none;*/
         }
-
 
         @media screen and (max-width: 700px) {
 
-/*            .sidebar-menu {
-                display: block;
-            }
-            .map {
-                display: block;
-                width: 100%;
-            }*/
-
         }
 
-
         @media only screen and (max-width: 768px) {
-          /* For mobile phones: */
-/*          [class*="col-"] {
-            width: 100%;
-          }*/
 
             .map {
                 display: block;
@@ -155,7 +118,6 @@
             }
             .sidebar-menu input {
                 margin: auto;
-                /*display: block;*/
                 width: 80%;
                 padding: 2%;
                 font-size: 16px;
@@ -163,16 +125,14 @@
 
         }
 
-
-
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 
 </head>
 <body>
-    <div id="outer-container" class="outer-container">
 
+    <div id="outer-container" class="outer-container">
         <div id="header" class="header"></div>
         <div id="main" class="main">
             <div id="sidebar-menu" class="sidebar-menu">
@@ -181,15 +141,9 @@
                     <button type="button" onclick="runFilter()">Filter</button>
                 </div>
                 <button type="button" onclick="resetFilter()">Reset</button>
-
-
                 <ul data-bind="foreach: viewModel.locationData" id="location-items">
                     <li data-bind="text: $data.name, visible: $data.showItem, click: viewModel.highlightMarker, css: { highlighted: $data.highlighted() == true }"></li>
                 </ul>
-                <!-- works: css: { 'highlighted': 'someValue' } -->
-                <!-- css: { profitWarning: viewModel.currentProfit() < 0 } -->
-                <!-- css: viewModel.highlightMenuItem -->
-
             </div>
             <div id="map" class="map"></div>
             <div class="clearfix"></div>
@@ -197,238 +151,7 @@
 
     </div>
 
-
-
-    <script>
-
-//Stores active markers for interaction with them in Google Maps.
-var markers = [];
-
-//Adds information window to google maps when a marker is clicked on.
-function addInfoWindow(marker, message, index) {
-    var infoWindow = new google.maps.InfoWindow({
-        content: message
-    });
-    viewModel.locationData()[index]['infoWindow'] = infoWindow;
-    
-    google.maps.event.addListener(marker, 'click', function () {
-        filterInfoWindows(marker.title);
-        // infoWindow.open(map, marker);//original
-        // viewModel.highlightMarker();
-        // console.log('markerEvent');
-        // console.log(marker);//has title
-        // filterInfoWindows(marker.title);
-
-        // var data = { 
-        //     'name': marker.title 
-        // }
-
-
-// {'name': marker.title}
-
-        // viewModel.highlightMarker(data,event);
-        // viewModel.highlightMarker(data);
-    });
-
-    //add the active infoWindow to view model to interact with programatically.
-    // viewModel.locationData()[index]['infoWindow'] = infoWindow;
-}
-
-
- // function initialize() {
-function initMap() {
-    console.log('initMap');
-    // var myLatlng = new google.maps.LatLng(-34.397, 150.644);
-    var myLatlng = new google.maps.LatLng(51.5076898,-0.1218453);
-
-    var myOptions = {
-     zoom: 12,
-     // center: new google.maps.LatLng(24.4481884, 54.3803007),
-     mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
-    // map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-    var map = new google.maps.Map(document.getElementById('map'), myOptions);
-    // var vm = new viewModel(data);
-    var marker;
-
-    $.each(viewModel.locationData(), function(i, item) {
-        marker = new google.maps.Marker({
-            position: item.location,
-            title: item.name,
-            map: map
-        });
-        // marker.visible = false;
-        marker.setMap(map);
-        // addInfoWindow(marker, item.info, i);
-        // addInfoWindow(marker, item.infoTitle, i);//original, works
-        viewModel.getInfoWindowContent(marker, item.infoTitle, i);
-
-
-
-        map.setCenter(marker.getPosition());
-        // marker.addListener('click', function() {
-        // // $('#campground_info').html(markerInfo)
-        // // viewModel.highlightMarker();
-        // });
-        // console.log(marker);
-
-        markers.push(marker);
-
-    });
-
- }
-// google.maps.event.addDomListener(window, 'load', initMap);
-
-
-function isLetterString(str) {
-  var value;
-  for (i = 0; i < str.length; i++) {
-    value = str[i].match(/[a-z]/i);
-    // console.log(value);
-    if (value == null) {
-      i = str.length;
-      value = false;
-    } else {
-      value = true;
-    }
-  }
-  return value;
-}
-
-
-$(document).ready(function() {
-
-    //filter funtionality
-    document.getElementById("input_filter").addEventListener("keyup", function() {
-
-        runFilter();
-
-        // var input = document.getElementById("input_filter");
-        // var value = isLetterString(input.value);
-
-        // console.log(value);
-
-        // //filter results against the input string 
-        // if ( value == true ) {
-        //     var inputLength = input.value.length;
-
-        //     for (i = 0; i < markers.length; i++) {
-        //         var marker = markers[i];
-
-        //         //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
-        //         //compare the two, if its a match add to the final output. if not, remove.
-        //         var res = marker.title.substring(0, inputLength);
-        //         console.log(res);
-
-        //         if ( res.toLowerCase() == input.value.toLowerCase() ) {
-        //             // console.log('res == input.value');
-        //         } else {
-        //             // console.log('NOT res == input.value');
-        //             marker.setVisible(false);
-        //             // locationData()[i].showItem(false);
-        //             // viewModel().locationData()[i].showItem(false);
-        //             viewModel.locationData()[i].showItem(false);
-        //         }
-        //     }
-        // } else {
-        //     // Set all items to display
-        //     console.log('else');
-        //     for (i = 0; i < markers.length; i++) {
-        //         markers[i].setVisible(true);
-        //         // locationData()[i].showItem(true);
-        //         // viewModel().locationData()[i].showItem(true);
-        //         viewModel.locationData()[i].showItem(true);
-        //     }
-        // }
-
-
-    }, false);
-
-
-});
-
-
-function runFilter() {
-
-    var input = document.getElementById("input_filter");
-    var value = isLetterString(input.value);
-
-    // console.log(value);
-
-    //filter results against the input string 
-    if ( value == true ) {
-        var inputLength = input.value.length;
-
-        for (i = 0; i < markers.length; i++) {
-            var marker = markers[i];
-
-            //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
-            //compare the two, if its a match add to the final output. if not, remove.
-            var res = marker.title.substring(0, inputLength);
-            // console.log(res);
-
-            if ( res.toLowerCase() == input.value.toLowerCase() ) {
-                // console.log('res == input.value');
-            } else {
-                // console.log('NOT res == input.value');
-                marker.setVisible(false);
-                // locationData()[i].showItem(false);
-                // viewModel().locationData()[i].showItem(false);
-                viewModel.locationData()[i].showItem(false);
-            }
-        }
-    } else {
-        // Set all items to display
-        // console.log('else');
-        for (i = 0; i < markers.length; i++) {
-            markers[i].setVisible(true);
-            // locationData()[i].showItem(true);
-            // viewModel().locationData()[i].showItem(true);
-            viewModel.locationData()[i].showItem(true);
-        }
-    }
-
-}
-
-function resetFilter() {
-        var input = document.getElementById("input_filter");
-        input.value = '';
-
-        for (i = 0; i < markers.length; i++) {
-            var marker = markers[i];
-            marker.setVisible(true);
-            viewModel.locationData()[i].showItem(true);
-            viewModel.locationData()[i].infoWindow.close();
-            viewModel.toggleHighlightClass(i, false);
-        }
-}
-
-function filterInfoWindows(markerTitle) {
-    // console.log('markerTitle: '+markerTitle);
-    for (i = 0; i < markers.length; i++) {
-        var marker = markers[i];
-        // console.log('filterInfoWindows i: '+i);
-        if ( marker.title.toLowerCase() != markerTitle.toLowerCase() ) {
-            viewModel.locationData()[i].infoWindow.close();
-        } else {
-            viewModel.locationData()[i].infoWindow.open(map, marker);
-            // infoWindow.open(map, marker);
-        }
-
-        // if ( marker.title.toLowerCase() == markerTitle.toLowerCase() ) {
-        //     // viewModel.locationData()[i].infoWindow.close();
-        // } else {
-        //     viewModel.locationData()[i].infoWindow.close();
-        // }
-
-    }
-}
-
-    </script>
-
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgvutAIrugkQmimvF8iCZdhhy7s4atumo&callback=initMap"></script>
-    <!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgvutAIrugkQmimvF8iCZdhhy7s4atumo"></script> -->
-    <!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script> -->
     <script src="js/lib/knockout-3.4.2.js"></script>
     <script src="../view_model/app.js"></script>
 

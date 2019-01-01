@@ -1,30 +1,19 @@
 var viewModel = {
     highlightMarker: function(data, event) {
-    	// console.log('highlightMarker');
-    	// console.log(data);
 		  for (i = 0; i < markers.length; i++) {
-		  	// console.log('highlightMarker i: '+i);
 		    var marker = markers[i];
-
         if ( data.name.toLowerCase() == marker.title.toLowerCase() ) {
             marker.setVisible(true);
             viewModel.toggleHighlightClass(i, true);
             viewModel.locationData()[i].infoWindow.open(map, marker);
-            // google.maps.event.trigger(marker, 'click');
-            // viewModel.locationData()[i].infoWindow.open(map, marker);
         } else {
             marker.setVisible(false);
-            // viewModel.locationData()[i].infoWindow.close();
             viewModel.toggleHighlightClass(i, false);
             viewModel.locationData()[i].infoWindow.close();
-            // viewModel.locationData()[i].infoWindow.close();
         }
 		  }
-		  // filterInfoWindows(marker.title);
     },
     toggleHighlightClass: function(item, value) {
-    	// console.log('toggleHighlightClass: '+item);
-    	// console.log(value);
         if (value == true) {
         	viewModel.locationData()[parseInt(item)].highlighted(true);
         } else {
@@ -32,7 +21,6 @@ var viewModel = {
         }
     },
     getInfoWindowContent: function(marker, title, index) {
-    	  // console.log('*** getInfoWindowContent ***');
         $.ajax({
           url: '/json/'+String(title),
           type: 'GET',
@@ -40,16 +28,10 @@ var viewModel = {
           marker: marker,
           dataType: 'json',
           success: function(data, textStatus, jqXHR) {
-          	// console.log(this.indexValue);
-          	// console.log(data);
-          	// console.log(textStatus);
-          	// console.log(jqXHR);
           	var result = data.query.pages;
-          	// console.log(result);
           	for (var property in result) {
           		addInfoWindow(this.marker, result[property].extract.substring(0, 150)+'...', this.indexValue);
-          	}
-          	// addInfoWindow(this.marker, data, this.indexValue);          	
+          	}         	
           },
           error: function(request, status, error) { 
           	console.log(request.responseText);
@@ -66,7 +48,6 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 // info : '<div>thing London Dungeon</div>',
 			 infoTitle: 'London_Dungeon'
 			}, {
 			 tag: "Government",
@@ -77,7 +58,6 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 // info : '<div>thing Palace of Westminster</div>',
 			 infoTitle: 'Palace_of_Westminster'
 			}, {
 			 tag: "Museum",
@@ -88,7 +68,6 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 // info : '<div>thing Imperial War Museum</div>',
 			 infoTitle: 'Imperial_War_Museum'
 			}, {
 			 tag: "Government",
@@ -99,7 +78,6 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 // info : '<div>thing Buckingham Palace</div>',
 			 infoTitle: 'Buckingham_Palace'
 			}, {
 			 tag: "Entertainment",
@@ -110,7 +88,6 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 // info : '<div>thing Shakespears Globe Theatre</div>',
 			 infoTitle: 'Shakespeare%27s_Globe'
 			}, {
 			 tag: "Landmarks",
@@ -121,11 +98,145 @@ var viewModel = {
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
-			 // info : '<div>thing Monument</div>',
 			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}
 		])
 };
 
 ko.applyBindings(viewModel);
-// ko.applyBindings(new viewModel.locationData(), document.getElementById("menu-items"));
+
+
+//Stores active markers for interaction with them in Google Maps.
+var markers = [];
+
+
+//Adds information window to google maps when a marker is clicked on.
+function addInfoWindow(marker, message, index) {
+    var infoWindow = new google.maps.InfoWindow({
+        content: message
+    });
+    viewModel.locationData()[index]['infoWindow'] = infoWindow;
+    
+    google.maps.event.addListener(marker, 'click', function () {
+        filterInfoWindows(marker.title);
+    });
+
+}
+
+
+// function initialize() {
+function initMap() {
+
+    var myLatlng = new google.maps.LatLng(51.5076898,-0.1218453);
+    var myOptions = {
+     zoom: 12,
+     mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+    var map = new google.maps.Map(document.getElementById('map'), myOptions);
+    var marker;
+
+    $.each(viewModel.locationData(), function(i, item) {
+        marker = new google.maps.Marker({
+            position: item.location,
+            title: item.name,
+            map: map
+        });
+        marker.setMap(map);
+        viewModel.getInfoWindowContent(marker, item.infoTitle, i);
+        map.setCenter(marker.getPosition());
+        markers.push(marker);
+    });
+
+ }
+
+
+function isLetterString(str) {
+  var value;
+  for (i = 0; i < str.length; i++) {
+    value = str[i].match(/[a-z]/i);
+    // console.log(value);
+    if (value == null) {
+      i = str.length;
+      value = false;
+    } else {
+      value = true;
+    }
+  }
+  return value;
+}
+
+
+$(document).ready(function() {
+
+    //filter funtionality
+    document.getElementById("input_filter").addEventListener("keyup", function() {
+        runFilter();
+    }, false);
+
+});
+
+
+function runFilter() {
+
+    var input = document.getElementById("input_filter");
+    var value = isLetterString(input.value);
+
+    //filter results against the input string 
+    if ( value == true ) {
+        var inputLength = input.value.length;
+
+        for (i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+
+            //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
+            //compare the two, if its a match add to the final output. if not, remove.
+            var res = marker.title.substring(0, inputLength);
+
+            if ( res.toLowerCase() == input.value.toLowerCase() ) {
+            } else {
+                marker.setVisible(false);
+                viewModel.locationData()[i].showItem(false);
+            }
+
+
+
+
+        }
+    } else {
+        // Set all items to display
+        for (i = 0; i < markers.length; i++) {
+            markers[i].setVisible(true);
+            viewModel.locationData()[i].showItem(true);
+        }
+    }
+
+}
+
+function resetFilter() {
+        var input = document.getElementById("input_filter");
+        input.value = '';
+
+        for (i = 0; i < markers.length; i++) {
+            var marker = markers[i];
+            marker.setVisible(true);
+            viewModel.locationData()[i].showItem(true);
+            viewModel.locationData()[i].infoWindow.close();
+            viewModel.toggleHighlightClass(i, false);
+        }
+}
+
+function filterInfoWindows(markerTitle) {
+    // console.log('markerTitle: '+markerTitle);
+    for (i = 0; i < markers.length; i++) {
+        var marker = markers[i];
+        // console.log('filterInfoWindows i: '+i);
+        if ( marker.title.toLowerCase() != markerTitle.toLowerCase() ) {
+            viewModel.locationData()[i].infoWindow.close();
+        } else {
+            viewModel.locationData()[i].infoWindow.open(map, marker);
+            // infoWindow.open(map, marker);
+        }
+    }
+}
+
+
