@@ -259,5 +259,3 @@ function filterInfoWindows(markerTitle) {
         }
     }
 }
-
-//add readme - done but needs testing
