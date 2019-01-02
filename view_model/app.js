@@ -26,11 +26,16 @@ var viewModel = {
           type: 'GET',
           indexValue: index,
           marker: marker,
+          title: title,
           dataType: 'json',
           success: function(data, textStatus, jqXHR) {
           	var result = data.query.pages;
+          	var wikiURL = 'https://en.wikipedia.org/wiki/';
+          	var resultAttribution = '<a href="'+wikiURL+this.title+'" target="_blank">Wikipedia</a>';
+          	var fullContent;
           	for (var property in result) {
-          		addInfoWindow(this.marker, result[property].extract.substring(0, 150)+'...', this.indexValue);
+          		fullContent = result[property].extract.substring(0, 150)+'...'+resultAttribution;
+          		addInfoWindow(this.marker, fullContent, this.indexValue);
           	}         	
           },
           error: function(request, status, error) { 
@@ -95,6 +100,16 @@ var viewModel = {
 			 location: {
 			   lat: 51.5101626,
 			   lng: -0.0860095
+			 },
+			 showItem: ko.observable(true),
+			 highlighted: ko.observable(false),
+			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
+			}, {
+			 tag: "Landmarks",
+			 name: "Monument 2",
+			 location: {
+			   lat: 51.5013641,
+			   lng: -0.1419852
 			 },
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
@@ -239,4 +254,10 @@ function filterInfoWindows(markerTitle) {
     }
 }
 
+
+
+
+//animate marker
+//add attribution to the source of the infowindow content
+//add readme
 
