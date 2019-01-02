@@ -1,7 +1,9 @@
+//Main viewModel object
 var viewModel = {
+	  //performs actions when a menu item is clicked
     highlightMarker: function(data, event) {
-		  for (i = 0; i < markers.length; i++) {
-		    var marker = markers[i];
+		  for (i = 0; i < viewModel.markers.length; i++) {
+		    var marker = viewModel.markers[i];
         if ( data.name.toLowerCase() == marker.title.toLowerCase() ) {
             marker.setVisible(true);
             viewModel.toggleHighlightClass(i, true);
@@ -13,6 +15,7 @@ var viewModel = {
         }
 		  }
     },
+    //toggles the highlight class on menu items
     toggleHighlightClass: function(item, value) {
         if (value == true) {
         	viewModel.locationData()[parseInt(item)].highlighted(true);
@@ -20,6 +23,7 @@ var viewModel = {
         	viewModel.locationData()[parseInt(item)].highlighted(false);
         }
     },
+    //Uses AJAX to obtain the infoWindow content for a marker
     getInfoWindowContent: function(marker, title, index) {
         $.ajax({
           url: '/json/'+String(title),
@@ -43,6 +47,9 @@ var viewModel = {
           },
         });
     },
+    //data array containing active markers for interaction programatically
+		markers: [],
+    //data array contiining menu items and marker windows
 		locationData: ko.observableArray([
 			{
 			 tag: "Museum",
@@ -104,25 +111,11 @@ var viewModel = {
 			 showItem: ko.observable(true),
 			 highlighted: ko.observable(false),
 			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
-			}, {
-			 tag: "Landmarks",
-			 name: "Monument 2",
-			 location: {
-			   lat: 51.5013641,
-			   lng: -0.1419852
-			 },
-			 showItem: ko.observable(true),
-			 highlighted: ko.observable(false),
-			 infoTitle: 'Monument_to_the_Great_Fire_of_London'
 			}
 		])
 };
 
 ko.applyBindings(viewModel);
-
-
-//Stores active markers for interaction with them in Google Maps.
-var markers = [];
 
 
 //Adds information window to google maps when a marker is clicked on.
@@ -132,14 +125,14 @@ function addInfoWindow(marker, message, index) {
     });
     viewModel.locationData()[index]['infoWindow'] = infoWindow;
     
-    google.maps.event.addListener(marker, 'click', function () {
+    google.maps.event.addListener(marker, 'click', function (event) {
         filterInfoWindows(marker.title);
     });
 
 }
 
 
-// function initialize() {
+//callback function to setup Google Maps
 function initMap() {
 
     var myLatlng = new google.maps.LatLng(51.5076898,-0.1218453);
@@ -154,17 +147,27 @@ function initMap() {
         marker = new google.maps.Marker({
             position: item.location,
             title: item.name,
-            map: map
+            map: map,
+            animation: google.maps.Animation.DROP,
+            draggable: false
         });
         marker.setMap(map);
         viewModel.getInfoWindowContent(marker, item.infoTitle, i);
         map.setCenter(marker.getPosition());
-        markers.push(marker);
+        viewModel.markers.push(marker);
     });
+
+		var mapOverlay = new google.maps.OverlayView();
+		mapOverlay.draw = function() {
+		  //this assigns an id to the markerlayer Pane, so it can be referenced by CSS
+		  this.getPanes().markerLayer.id = 'markerLayer';
+		};
+		mapOverlay.setMap(map);
 
  }
 
 
+//validates the data from input field before using it
 function isLetterString(str) {
   var value;
   for (i = 0; i < str.length; i++) {
@@ -181,16 +184,16 @@ function isLetterString(str) {
 }
 
 
+//runs when the doucment is ready
 $(document).ready(function() {
-
-    //filter funtionality
+    //add filter funtionality
     document.getElementById("input_filter").addEventListener("keyup", function() {
         runFilter();
     }, false);
-
 });
 
 
+//tests and matches search string against items in the menu
 function runFilter() {
 
     var input = document.getElementById("input_filter");
@@ -200,64 +203,61 @@ function runFilter() {
     if ( value == true ) {
         var inputLength = input.value.length;
 
-        for (i = 0; i < markers.length; i++) {
-            var marker = markers[i];
+        for (i = 0; i < viewModel.markers.length; i++) {
+            var marker = viewModel.markers[i];
 
             //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
             //compare the two, if its a match add to the final output. if not, remove.
             var res = marker.title.substring(0, inputLength);
-
             if ( res.toLowerCase() == input.value.toLowerCase() ) {
             } else {
                 marker.setVisible(false);
                 viewModel.locationData()[i].showItem(false);
             }
-
-
-
-
         }
     } else {
         // Set all items to display
-        for (i = 0; i < markers.length; i++) {
-            markers[i].setVisible(true);
+        for (i = 0; i < viewModel.markers.length; i++) {
+            viewModel.markers[i].setVisible(true);
             viewModel.locationData()[i].showItem(true);
         }
     }
 
 }
 
+
+//resets all markers and menu items
 function resetFilter() {
         var input = document.getElementById("input_filter");
         input.value = '';
 
-        for (i = 0; i < markers.length; i++) {
-            var marker = markers[i];
+        for (i = 0; i < viewModel.markers.length; i++) {
+            var marker = viewModel.markers[i];
             marker.setVisible(true);
+            marker.setAnimation(null);
             viewModel.locationData()[i].showItem(true);
             viewModel.locationData()[i].infoWindow.close();
             viewModel.toggleHighlightClass(i, false);
         }
 }
 
+
+//controls if infoWindows are displayed. Also controls marker animations
 function filterInfoWindows(markerTitle) {
-    // console.log('markerTitle: '+markerTitle);
-    for (i = 0; i < markers.length; i++) {
-        var marker = markers[i];
-        // console.log('filterInfoWindows i: '+i);
+    for (i = 0; i < viewModel.markers.length; i++) {
+        var marker = viewModel.markers[i];
         if ( marker.title.toLowerCase() != markerTitle.toLowerCase() ) {
             viewModel.locationData()[i].infoWindow.close();
+						marker.setAnimation(null);
         } else {
             viewModel.locationData()[i].infoWindow.open(map, marker);
-            // infoWindow.open(map, marker);
+						if (marker.getAnimation() !== null) {
+						  marker.setAnimation(null);
+						} else {
+						  marker.setAnimation(google.maps.Animation.BOUNCE);
+						}
         }
     }
 }
 
-
-
-
-//animate marker
-//add attribution to the source of the infowindow content
-//add readme
-
+//add readme - done but needs testing
