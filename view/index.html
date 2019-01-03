@@ -2,10 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="css/styles.css">
     <title>Locations App</title>
     <style>
 
-        html, body {
+
+
+
+/*        html, body {
             height: 100%;
             margin: 0;
             padding: 0;
@@ -124,7 +129,10 @@
             }
 
         }
-        
+        */
+
+
+
     </style>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
@@ -151,9 +159,8 @@
 
     </div>
 
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgvutAIrugkQmimvF8iCZdhhy7s4atumo&callback=initMap"></script>
     <script src="js/lib/knockout-3.4.2.js"></script>
     <script src="../view_model/app.js"></script>
-
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgvutAIrugkQmimvF8iCZdhhy7s4atumo&callback=initMap" onerror="googleMapsError()"></script>
 </body>
 </html>

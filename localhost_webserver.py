@@ -43,6 +43,12 @@ def showLandingPage():
     # return 'test'
 
 
+@app.route('/css/<path:path>')
+def getCSS(path):
+    # print path
+    return send_from_directory('css', path)
+
+
 @app.route('/js/<path:path>')
 def getJS(path):
     # print path
