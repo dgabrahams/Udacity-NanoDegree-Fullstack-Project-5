@@ -1,8 +1,10 @@
+'use strict'
+
 //Main viewModel object
 var viewModel = {
 	  //performs actions when a menu item is clicked
     highlightMarker: function(data, event) {
-		  for (i = 0; i < viewModel.markers.length; i++) {
+		  for (var i = 0; i < viewModel.markers.length; i++) {
 		    var marker = viewModel.markers[i];
         if ( data.name.toLowerCase() == marker.title.toLowerCase() ) {
             marker.setVisible(true);
@@ -47,8 +49,85 @@ var viewModel = {
           },
         });
     },
+    //tests and matches search string against items in the menu
+    runFilter: function(data) {
+    	var input = viewModel.searchValue();
+			var value = this.isLetterString(input);
+
+	    //filter results against the input string 
+	    if ( value == true ) {
+
+	        var inputLength = input.length;
+
+	        for (var i = 0; i < viewModel.markers.length; i++) {
+	            var marker = viewModel.markers[i];
+
+	            //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
+	            //compare the two, if its a match add to the final output. if not, remove.
+	            var res = marker.title.substring(0, inputLength);
+	            if ( res.toLowerCase() == input.toLowerCase() ) {
+	            } else {
+	                marker.setVisible(false);
+	                viewModel.locationData()[i].showItem(false);
+	            }
+	        }
+	    } else {
+	        // Set all items to display
+	        for (var i = 0; i < viewModel.markers.length; i++) {
+	            viewModel.markers[i].setVisible(true);
+	            viewModel.locationData()[i].showItem(true);
+	        }
+	    }
+    },
+    //validates the data from input field before using it
+    isLetterString: function(str) {
+		  var value;
+		  for (var i = 0; i < str.length; i++) {
+		    value = str[i].match(/[a-z]/i);
+		    // console.log(value);
+		    if (value == null) {
+		      var i = str.length;
+		      value = false;
+		    } else {
+		      value = true;
+		    }
+		  }
+		  return value;
+    },
+		//resets all markers and menu items
+    resetFilter: function() {
+	    	//reset search value in DOM and viewModel to empty
+        viewModel.searchValue('');
+        for (var i = 0; i < viewModel.markers.length; i++) {
+            var marker = viewModel.markers[i];
+            marker.setVisible(true);
+            marker.setAnimation(null);
+            viewModel.locationData()[i].showItem(true);
+            viewModel.locationData()[i].infoWindow.close();
+            viewModel.toggleHighlightClass(i, false);
+        }
+    },
+		//controls if infoWindows are displayed. Also controls marker animations
+		filterInfoWindows: function(markerTitle) {
+	    for (var i = 0; i < viewModel.markers.length; i++) {
+	        var marker = viewModel.markers[i];
+	        if ( marker.title.toLowerCase() != markerTitle.toLowerCase() ) {
+	            viewModel.locationData()[i].infoWindow.close();
+							marker.setAnimation(null);
+	        } else {
+	            viewModel.locationData()[i].infoWindow.open(map, marker);
+							if (marker.getAnimation() !== null) {
+							  marker.setAnimation(null);
+							} else {
+							  marker.setAnimation(google.maps.Animation.BOUNCE);
+							}
+	        }
+	    }
+		},
     //data array containing active markers for interaction programatically
 		markers: [],
+		//observable holds dynamic value of input field
+		searchValue: ko.observable(''),
     //data array contiining menu items and marker windows
 		locationData: ko.observableArray([
 			{
@@ -126,7 +205,7 @@ function addInfoWindow(marker, message, index) {
     viewModel.locationData()[index]['infoWindow'] = infoWindow;
     
     google.maps.event.addListener(marker, 'click', function (event) {
-        filterInfoWindows(marker.title);
+        viewModel.filterInfoWindows(marker.title);
     });
 
 }
@@ -168,97 +247,98 @@ function initMap() {
 
 
 //validates the data from input field before using it
-function isLetterString(str) {
-  var value;
-  for (i = 0; i < str.length; i++) {
-    value = str[i].match(/[a-z]/i);
-    // console.log(value);
-    if (value == null) {
-      i = str.length;
-      value = false;
-    } else {
-      value = true;
-    }
-  }
-  return value;
-}
+// function isLetterString(str) {
+//   var value;
+//   for (var i = 0; i < str.length; i++) {
+//     value = str[i].match(/[a-z]/i);
+//     // console.log(value);
+//     if (value == null) {
+//       var i = str.length;
+//       value = false;
+//     } else {
+//       value = true;
+//     }
+//   }
+//   return value;
+// }
 
 
 //runs when the doucment is ready
-$(document).ready(function() {
-    //add filter funtionality
-    document.getElementById("input_filter").addEventListener("keyup", function() {
-        runFilter();
-    }, false);
-});
+// $(document).ready(function() {
+//     //add filter funtionality
+//     // document.getElementById("input_filter").addEventListener("keyup", function() {
+//     //     runFilter();
+//     // }, false);
+// });
 
 
 //tests and matches search string against items in the menu
-function runFilter() {
+// function runFilter() {
 
-    var input = document.getElementById("input_filter");
-    var value = isLetterString(input.value);
+//     var input = document.getElementById("input_filter");
+//     var value = isLetterString(input.value);
 
-    //filter results against the input string 
-    if ( value == true ) {
-        var inputLength = input.value.length;
+//     //filter results against the input string 
+//     if ( value == true ) {
+//         var inputLength = input.value.length;
 
-        for (i = 0; i < viewModel.markers.length; i++) {
-            var marker = viewModel.markers[i];
+//         for (var i = 0; i < viewModel.markers.length; i++) {
+//             var marker = viewModel.markers[i];
 
-            //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
-            //compare the two, if its a match add to the final output. if not, remove.
-            var res = marker.title.substring(0, inputLength);
-            if ( res.toLowerCase() == input.value.toLowerCase() ) {
-            } else {
-                marker.setVisible(false);
-                viewModel.locationData()[i].showItem(false);
-            }
-        }
-    } else {
-        // Set all items to display
-        for (i = 0; i < viewModel.markers.length; i++) {
-            viewModel.markers[i].setVisible(true);
-            viewModel.locationData()[i].showItem(true);
-        }
-    }
+//             //take the number of letters in the input string, and then test that against the substring of the name it is currently analysing.
+//             //compare the two, if its a match add to the final output. if not, remove.
+//             var res = marker.title.substring(0, inputLength);
+//             if ( res.toLowerCase() == input.value.toLowerCase() ) {
+//             } else {
+//                 marker.setVisible(false);
+//                 viewModel.locationData()[i].showItem(false);
+//             }
+//         }
+//     } else {
+//         // Set all items to display
+//         for (var i = 0; i < viewModel.markers.length; i++) {
+//             viewModel.markers[i].setVisible(true);
+//             viewModel.locationData()[i].showItem(true);
+//         }
+//     }
 
-}
+// }
 
 
 //resets all markers and menu items
-function resetFilter() {
-        var input = document.getElementById("input_filter");
-        input.value = '';
+// function resetFilter() {
+//         var input = document.getElementById("input_filter");
+//         input.value = '';
 
-        for (i = 0; i < viewModel.markers.length; i++) {
-            var marker = viewModel.markers[i];
-            marker.setVisible(true);
-            marker.setAnimation(null);
-            viewModel.locationData()[i].showItem(true);
-            viewModel.locationData()[i].infoWindow.close();
-            viewModel.toggleHighlightClass(i, false);
-        }
-}
+//         for (var i = 0; i < viewModel.markers.length; i++) {
+//             var marker = viewModel.markers[i];
+//             marker.setVisible(true);
+//             marker.setAnimation(null);
+//             viewModel.locationData()[i].showItem(true);
+//             viewModel.locationData()[i].infoWindow.close();
+//             viewModel.toggleHighlightClass(i, false);
+//         }
+// }
+//<button type="button" data-bind="click: viewModel.runFilter">Reset</button>
 
 
 //controls if infoWindows are displayed. Also controls marker animations
-function filterInfoWindows(markerTitle) {
-    for (i = 0; i < viewModel.markers.length; i++) {
-        var marker = viewModel.markers[i];
-        if ( marker.title.toLowerCase() != markerTitle.toLowerCase() ) {
-            viewModel.locationData()[i].infoWindow.close();
-						marker.setAnimation(null);
-        } else {
-            viewModel.locationData()[i].infoWindow.open(map, marker);
-						if (marker.getAnimation() !== null) {
-						  marker.setAnimation(null);
-						} else {
-						  marker.setAnimation(google.maps.Animation.BOUNCE);
-						}
-        }
-    }
-}
+// function filterInfoWindows(markerTitle) {
+//     for (var i = 0; i < viewModel.markers.length; i++) {
+//         var marker = viewModel.markers[i];
+//         if ( marker.title.toLowerCase() != markerTitle.toLowerCase() ) {
+//             viewModel.locationData()[i].infoWindow.close();
+// 						marker.setAnimation(null);
+//         } else {
+//             viewModel.locationData()[i].infoWindow.open(map, marker);
+// 						if (marker.getAnimation() !== null) {
+// 						  marker.setAnimation(null);
+// 						} else {
+// 						  marker.setAnimation(google.maps.Animation.BOUNCE);
+// 						}
+//         }
+//     }
+// }
 
 
 //handles errors generated by Google Maps when loading

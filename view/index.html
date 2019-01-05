@@ -5,150 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
     <title>Locations App</title>
-    <style>
-
-
-
-
-/*        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .outer-container {
-            max-width: 800px;
-            margin: auto;
-            font-size: 0;
-            line-height: 0;
-        }
-
-        .main {
-            width: 100%;
-            max-width: 800px;
-            background-color: #000000;
-            padding: 0;
-        }
-        .clearfix {
-            clear: both;
-            float: none;
-        }
-
-        .header {
-            display: block;
-            width: 100%;
-            background-color: #000000;
-            height:50px;
-        }
-        .sidebar-menu {
-            display: inline-block;
-            vertical-align: top;
-            width: 35%;
-            color: #ffffff;
-            padding: 0;
-            float: left;
-        }
-        .map {
-            display: inline-block;
-            vertical-align: top;
-            width: 65%; 
-            height: 100%;
-            padding-bottom: 70%;
-            float: right;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            line-height: 3;
-            font-family: sans-serif;
-            font-weight: 100;
-            font-size: 14px;
-            color: #A0A0A0;
-            padding: 0 5% 0 5%;
-        }
-        li:hover {
-            cursor: pointer;
-        }
-        .highlighted {
-            background-color: #ffffff;
-            background-color:rgba(255,255,255,0.2);
-            color: #ffffff;
-        }
-        .sidebar-menu input {
-            margin: auto;
-            width: 71.333%;
-            padding: 2%;
-            font-size: 16px;
-        }
-        .sidebar-menu button {
-            display: inline-block;
-            width: 24.333%;
-            text-align: center;
-            padding: 2%;
-            font-size: 16px;
-            border: none;
-            cursor: pointer;
-        }
-        .sidebar-menu button:hover {
-            background-color: rgb(220,220,220);
-        }
-        .sidebar-menu button:active {
-            background-color: rgb(214, 234, 248);
-        }
-        .input-container input {
-            display: inline-block;
-            border: none;
-        }
-        .input-container button {
-            width: 24.333%;
-        }
-
-        @media screen and (max-width: 700px) {
-
-        }
-
-        @media only screen and (max-width: 768px) {
-
-            .map {
-                display: block;
-                width: 100%;
-            }
-            .sidebar-menu {
-                display: block;
-                max-height: 400px;
-                width: 100%;
-                text-align: center;
-            }
-            .sidebar-menu input {
-                margin: auto;
-                width: 80%;
-                padding: 2%;
-                font-size: 16px;
-            }
-
-        }
-        */
-
-
-
-    </style>
-
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-
 </head>
 <body>
-
     <div id="outer-container" class="outer-container">
         <div id="header" class="header"></div>
         <div id="main" class="main">
             <div id="sidebar-menu" class="sidebar-menu">
                 <div class="input-container">
-                    <input type="text" name="filter_input" id="input_filter">
-                    <button type="button" onclick="runFilter()">Filter</button>
+                    <input type="text" name="filter_input" id="input_filter" data-bind="textInput: viewModel.searchValue, event: { keyup: viewModel.runFilter }">
+                    <button type="button" data-bind="click: viewModel.runFilter">Filter</button>
                 </div>
-                <button type="button" onclick="resetFilter()">Reset</button>
+                <button type="button" data-bind="click: viewModel.resetFilter">Reset</button>
                 <ul data-bind="foreach: viewModel.locationData" id="location-items">
                     <li data-bind="text: $data.name, visible: $data.showItem, click: viewModel.highlightMarker, css: { highlighted: $data.highlighted() == true }"></li>
                 </ul>
@@ -156,9 +24,7 @@
             <div id="map" class="map"></div>
             <div class="clearfix"></div>
         </div>
-
     </div>
-
     <script src="js/lib/knockout-3.4.2.js"></script>
     <script src="../view_model/app.js"></script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDgvutAIrugkQmimvF8iCZdhhy7s4atumo&callback=initMap" onerror="googleMapsError()"></script>

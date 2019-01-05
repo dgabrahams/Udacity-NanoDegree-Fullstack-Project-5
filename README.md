@@ -17,7 +17,7 @@ To determine whether you have Python installed, open the Terminal application, t
 python -V
 ```
 
-This command will report the version of Node:
+This command will report the version:
 ```
 Python 2.7.15
 ```
@@ -25,6 +25,21 @@ Python 2.7.15
 If your machine does not recognise the node command, then you might need to install it.
 ```
 https://wiki.python.org/moin/BeginnersGuide/Download
+```
+
+To determine whether you have virtualenv installed, open the Terminal application, type the following, and press Return:
+```
+virtualenv --version
+```
+
+This command will report the version:
+```
+15.2.0
+```
+
+If your machine does not recognise the command, then you might need to install it.
+```
+https://virtualenv.pypa.io/en/latest/installation/
 ```
 
 To determine whether you have GIT installed, open the Terminal application, type the following, and press Return:
@@ -74,7 +89,7 @@ Create a virtual environment:
 virtualenv locationapp-workspace
 ```
 
-Navigate into the newly the workspace folder:
+Navigate into the newly created workspace folder:
 ```
 cd locationapp-workspace
 ```
