@@ -82,13 +82,14 @@ var viewModel = {
 	        }
 	    } else if(typeof value == 'undefined') {
 	    	viewModel.resetFilter();
-	    } else {
-	        // Set all items to display
-	        // for (var i = 0; i < viewModel.markers.length; i++) {
-	        //     viewModel.markers[i].setVisible(true);
-	        //     viewModel.locationData()[i].showItem(true);
-	        // }
-	    }
+	    } 
+	    // else {
+	    //     // Set all items to display
+	    //     // for (var i = 0; i < viewModel.markers.length; i++) {
+	    //     //     viewModel.markers[i].setVisible(true);
+	    //     //     viewModel.locationData()[i].showItem(true);
+	    //     // }
+	    // }
     },
     //validates the data from input field before using it
     isLetterString: function(str) {
