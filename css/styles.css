@@ -3,6 +3,7 @@ body {
     height: 100%;
     margin: 0;
     padding: 0;
+    font-family: sans-serif;
 }
 
 .outer-container {
@@ -28,7 +29,15 @@ body {
     display: block;
     width: 100%;
     background-color: #000000;
-    height:50px;
+    /*padding: 2% 0 2% 2%;*/
+}
+
+.header h2 {
+    font-size: 16px;
+    line-height: 1;
+    color: #ffffff;
+    margin: 0;
+    padding: 2% 0 2% 2%;
 }
 
 .sidebar-menu {
@@ -143,6 +152,14 @@ li:hover {
 
     .input-container button {
         float: left;
+    }
+
+    .header h2 {
+        padding: 4.5% 0 4.5% 5%;
+    }
+
+    li {
+        padding: 0;
     }
 
 }
