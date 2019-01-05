@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 //Main viewModel object
 var viewModel = {
@@ -6,14 +6,16 @@ var viewModel = {
     highlightMarker: function(data, event) {
 		  for (var i = 0; i < viewModel.markers.length; i++) {
 		    var marker = viewModel.markers[i];
+		    //toggles highlight and controls marker + windowinfo state
         if ( data.name.toLowerCase() == marker.title.toLowerCase() ) {
-            marker.setVisible(true);
             viewModel.toggleHighlightClass(i, true);
-            viewModel.locationData()[i].infoWindow.open(map, marker);
+            viewModel.filterInfoWindows(marker.title);
+            // viewModel.locationData()[i].infoWindow.open(map, marker);
+            // marker.setVisible(true);
         } else {
-            marker.setVisible(false);
             viewModel.toggleHighlightClass(i, false);
-            viewModel.locationData()[i].infoWindow.close();
+            // viewModel.locationData()[i].infoWindow.close();
+            // marker.setVisible(false);
         }
 		  }
     },
@@ -39,10 +41,10 @@ var viewModel = {
           	var wikiURL = 'https://en.wikipedia.org/wiki/';
           	var resultAttribution = '<a href="'+wikiURL+this.title+'" target="_blank">Wikipedia</a>';
           	var fullContent;
-          	for (var property in result) {
-          		fullContent = result[property].extract.substring(0, 150)+'...'+resultAttribution;
-          		addInfoWindow(this.marker, fullContent, this.indexValue);
-          	}         	
+            for (var property in result) {
+              fullContent = result[property].extract.substring(0, 150)+'...'+resultAttribution;
+              addInfoWindow(this.marker, fullContent, this.indexValue);
+            }
           },
           error: function(request, status, error) { 
           	console.log(request.responseText);
@@ -54,14 +56,11 @@ var viewModel = {
     runFilter: function(data) {
     	var input = viewModel.searchValue();
 			var value = this.isLetterString(input);
-			// console.log('input: '+input);
-			// console.log('value: '+value);
+
+			viewModel.closeAllWindowInfo();
 
 	    //filter results against the input string 
 	    if ( value == true ) {
-
-	        var inputLength = input.length;
-
 	        for (var i = 0; i < viewModel.markers.length; i++) {
 	            var marker = viewModel.markers[i];
 
@@ -83,13 +82,6 @@ var viewModel = {
 	    } else if(typeof value == 'undefined') {
 	    	viewModel.resetFilter();
 	    } 
-	    // else {
-	    //     // Set all items to display
-	    //     // for (var i = 0; i < viewModel.markers.length; i++) {
-	    //     //     viewModel.markers[i].setVisible(true);
-	    //     //     viewModel.locationData()[i].showItem(true);
-	    //     // }
-	    // }
     },
     //validates the data from input field before using it
     isLetterString: function(str) {
@@ -97,7 +89,7 @@ var viewModel = {
 		  for (var i = 0; i < str.length; i++) {
 		    value = str[i].match(/[a-z\s]/i);
 		    if (value == null) {
-		      var i = str.length;
+		      //var i = str.length;
 		      value = false;
 		    } else {
 		      value = true;
@@ -114,6 +106,19 @@ var viewModel = {
             marker.setVisible(true);
             marker.setAnimation(null);
             viewModel.locationData()[i].showItem(true);
+            viewModel.locationData()[i].infoWindow.close();
+            viewModel.toggleHighlightClass(i, false);
+        }
+    },
+		//closes all infowindows
+    closeAllWindowInfo: function() {
+	    	//reset search value in DOM and viewModel to empty
+        // viewModel.searchValue('');
+        for (var i = 0; i < viewModel.markers.length; i++) {
+            var marker = viewModel.markers[i];
+            marker.setVisible(true);
+            marker.setAnimation(null);
+            // viewModel.locationData()[i].showItem(true);
             viewModel.locationData()[i].infoWindow.close();
             viewModel.toggleHighlightClass(i, false);
         }
@@ -224,12 +229,10 @@ function addInfoWindow(marker, message, index) {
 
 //callback function to setup Google Maps
 function initMap() {
-
-    var myLatlng = new google.maps.LatLng(51.5076898,-0.1218453);
     var myOptions = {
      zoom: 12,
      mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
+    };
     var map = new google.maps.Map(document.getElementById('map'), myOptions);
     var marker;
 
@@ -253,7 +256,6 @@ function initMap() {
 		  this.getPanes().markerLayer.id = 'markerLayer';
 		};
 		mapOverlay.setMap(map);
-
  }
 
 
